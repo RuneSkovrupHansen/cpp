@@ -181,3 +181,4 @@ The syntax is then:
 Where `<object_reference>` is often `this`, since we're commonly binding a function which is a member to the class which is executing the bind.
 
 
+When binding a function that is not a member, we can simply provide a function reference and then the arguments to the function with placeholders.
