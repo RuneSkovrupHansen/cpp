@@ -182,3 +182,73 @@ Where `<object_reference>` is often `this`, since we're commonly binding a funct
 
 
 When binding a function that is not a member, we can simply provide a function reference and then the arguments to the function with placeholders.
+
+
+# Lambda
+
+A lambda is convenient way of defining an anonymous function object (a closure). Useful to avoid function bloat in a codebase.
+
+https://learn.microsoft.com/en-us/cpp/cpp/lambda-expressions-in-cpp?view=msvc-170
+
+```
+[]() mutable throw() -> int {
+    ...
+}
+```
+
+
+## Capture
+
+[] capture clause. C++14. Can access or *capture* variables from the surrounding scope.
+
+Variables put inside the [] can be accessed inside. How variables are captures can be specified with & or =, & is by reference, = is by value.
+
+Examples:
+
+```
+[&total, factor]
+[factor, &total]
+[&, factor]
+[=, &total]
+```
+
+`[&, ...]`, sets the default capture method as if by reference.
+
+This can also be captured.
+
+
+**Note** Static values do not have to be captured to be used inside of the lambda.
+
+
+## Generalized Capture C++14
+
+Parameters can be initialized in capture clause. See source.
+
+
+## Parameter List
+
+Similar to function. Optional for lambda. Parameters for the function body.
+
+Use of auto in parameter list is used as a template. Each instance of auto in parameter list is equivalent to distinct type.
+
+
+## Mutable Specification
+
+The mutable specification enables the body of a lambda expression to modify variables that are captured by value. They are not actually modified at the calling location, but they can be modified inside of the lambda body.
+
+
+## Exception Specification
+
+You can use the noexcept exception specification to indicate that the lambda expression doesn't throw any exceptions.
+
+
+## Return Type
+
+Automatically inferred form parameter list or must be specified with trailing-return-type, `->`.
+
+
+## Lambda Body
+
+Where the logic of the function itself is written.
+
+
