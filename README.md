@@ -144,6 +144,40 @@ auto create2(bool b) {
 ```
 
 
+# Bind
 
+`std::bind`
+
+The function template bind generates a forwarding call wrapper for f. Calling this wrapper is equivalent to invoking f with some of its arguments bound to args.
+
+Use of placeholder arguments, `std::placeholders_#`
+
+## Partial Function Application
+
+std::bind is a partial function application, can be used to wrap a function call to simplify it by passing static parameters to the wrapped function.
+
+https://stackoverflow.com/questions/6610046/stdfunction-and-stdbind-what-are-they-and-when-should-they-be-used
+
+You generally use it when you need to pass a functor to some algorithm. You have a function or functor that almost does the job you want, but is more configurable (i.e. has more parameters) than the algorithm uses. So you bind arguments to some of the parameters, and leave the rest for the algorithm to fill in.
+
+Used to simplify functions by wrapping them.
+
+
+## Generalized Function Pointer
+
+Can also be used to generate a pointer to a function.
+
+Equivalent to creating a safe function pointer.
+
+https://stackoverflow.com/a/40944576/18558004
+
+
+Why do we need to pass `this` after the reference to the function? Because a non-static member function has an implicit first parameter of type Class*, i.e. a pointer to the object it is part of. Because of this, we need to also supply a pointer to the object which the member function belongs to when using std::bind as a function pointer.
+
+The syntax is then:
+
+`std::bind(<function_reference>, <object_reference>, <function_arguments>)`.
+
+Where `<object_reference>` is often `this`, since we're commonly binding a function which is a member to the class which is executing the bind.
 
 
