@@ -23,7 +23,9 @@ A wrapper around a normal pointer.
 
 It's almost always useful to create a shared pointer as opposed to a regular pointer, since a shared pointer automatically will deallocate the memory after usage is over, as opposed to a standard pointer, which required you to manually deallocate the memory. This is one reason why memory leaks can occur, since is a pointer is not deallocated, the object in the heap it is pointed to is never collected by the GC.
 
-Inside of the `std::make_shared()` call is a call to `new` which instantiates the pointer. Sometimes, to create a pointer to a new object, new be used with an object. Example `std::make_shared(new MyObject())`
+Inside `std::make_shared()` is a call to `new` which instantiates the pointer. Because of this, **"new" should not be used inside of std::make_shared()**.
+
+Sometimes, to create a pointer to an object, new can be used when initializing the object. Example, `new MyObject()`.
 
 
 ## std::unique_ptr
@@ -216,7 +218,6 @@ Examples:
 
 This can also be captured.
 
-
 **Note** Static values do not have to be captured to be used inside of the lambda.
 
 
@@ -324,6 +325,8 @@ Output must not be ignored, should be returned, output it not returned in stdou/
 ## Writing the main() Function
 
 It should not be necessary to write own main function, link with gtest_main instead, to have a main function automatically included.
+
+**Note** in the mir environment, the ROS node handle is often initialized in the main() function on the test, since fixtures use a node handle object. In this case, the Bazel main cannot be used.
 
 
 ## Template
