@@ -252,6 +252,10 @@ Automatically inferred form parameter list or must be specified with trailing-re
 
 Where the logic of the function itself is written.
 
+## Empty Lambda
+
+`[](bool){}` if the function takes one bool parameter.
+
 
 # gTest Testing
 
