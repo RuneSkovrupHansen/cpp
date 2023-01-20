@@ -257,6 +257,17 @@ Where the logic of the function itself is written.
 `[](bool){}` if the function takes one bool parameter.
 
 
+## Lambda Examples
+
+Passing a lambda which captures 2 variables by reference. The lambda is passed to the c++20 erase_if() which passes a reference to the element of the map that it iterates over:
+
+```
+std::erase_if(command_time_map, [&, current_time_ms, threshold_time_ms](const auto& item) {
+  return current_time_ms - item.second > threshold_time_ms;
+});
+```
+
+
 # gTest Testing
 
 Use of macros such as EXCEPT and ASSERT to make assertions.
@@ -624,3 +635,41 @@ A call `x.Y(...)` is uninteresting if there’s not even a single `EXPECT_CALL(x
 .
 
 
+# Hash table
+
+https://en.wikipedia.org/wiki/Hash_table
+
+A data structure that implements a dictionary. An abstract data type that maps keys to values.
+
+A hash table uses a hash function to compute an index into an array of buckets / slots, from which the desired value can be found.
+
+During lookup, the key is hashed and the resulting hash indicates where the corresponding value is stored.
+
+Ideally hash function assigns each key a unique bucket, but most hash tables employ an imperfect hashing algorithm, which might cause collisions where the hash function generates the same index for multiple keys. Such collisions are usually accommodated for.
+
+It seems that the data structure is efficient since the hash can be used to directly look up the value without traversing the data structure looking for the key.
+
+In a well-dimensioned hash table, the average time complexity for each lookup is independent of the number of elements stored in the table. Many hash table designs also allow arbitrary insertions and deletions at a constant average cost per operation.
+
+Hashing is a space-time tradeoff. If memory is infinite, the entire key can be used directly as an index to locate its value. If time is infinite, values can be stored without regard for their keys, and a binary or linear search can be used to retrieve the element.
+
+On average, a hash table is more efficient than search trees or any other table lookup structure.
+
+
+# std::map, std::unordered_map
+
+https://www.geeksforgeeks.org/map-vs-unordered_map-c/
+
+https://www.scaler.com/topics/unordered_map-cpp/
+
+
+Note funky interaction using erase, it's required to assign the iterator to the output of the erase command.
+
+`it = wordMap.erase(it);`
+
+
+# [[nodiscard]]
+
+https://en.cppreference.com/w/cpp/language/attributes/nodiscard
+
+If a function declared nodiscard or a function returning an enumeration or class declared nodiscard by value is called from a discarded-value expression other than a cast to void, the compiler is encouraged to issue a warning. 
