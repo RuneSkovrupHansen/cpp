@@ -185,6 +185,10 @@ Where `<object_reference>` is often `this`, since we're commonly binding a funct
 
 When binding a function that is not a member, we can simply provide a function reference and then the arguments to the function with placeholders.
 
+## Better Alternatives
+
+In general std::bind_front and lambdas are a better option. See https://abseil.io/tips/108
+
 
 # Lambda
 
