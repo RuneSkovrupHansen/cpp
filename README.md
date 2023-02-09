@@ -677,3 +677,226 @@ Note funky interaction using erase, it's required to assign the iterator to the 
 https://en.cppreference.com/w/cpp/language/attributes/nodiscard
 
 If a function declared nodiscard or a function returning an enumeration or class declared nodiscard by value is called from a discarded-value expression other than a cast to void, the compiler is encouraged to issue a warning. 
+
+
+# Virtual Methods
+
+Virtual methods are very common when making interfaces. Primarily this is done using pure virtual methods for a class implementing the interface to provide it's own custom implementation.
+
+Virtual methods:
+
+Marking a method with the virtual keyword allows it to be overridden, otherwise it cannot be overridden.
+
+
+Pure virtual methods:
+
+If a virtual method is set equal to 0 it must be overridden for the program to compile. It's been called a pure virtual method, since it does not even have its own implementation.
+
+
+Using interfaces composed of virtual methods is often preferred to using inheritance.
+
+Inheritance provides actual inheritance, where in most cases we want polymorphism to be able to substitute objects/types for each other. Interfaces provides this without inheriting default behavior or unnecessary methods.
+
+
+# Using / Typedef
+
+Using is preferred over Typedef since it shows the name of the defined type before the definition of the type. It's a minor issue but it is the standard.
+
+`typedef std::tuple<int, int> point`
+
+`using point = std::tuple<int, int>`
+
+
+# Const Members
+
+Constant member functions are those functions that are denied permission to change the values of the data members of their class. To make a member function constant, the keyword “const” is appended to the function prototype and also to the function definition header.
+
+Like member functions and member function arguments, the objects of a class can also be declared as const. an object declared as const cannot be modified and hence, can invoke only const member functions as these functions ensure not to modify the object.
+
+A const object can be created by prefixing the const keyword to the object declaration. Any attempt to change the data member of const objects results in a compile-time error. 
+
+
+A const object cannot be modified.
+
+`const int x(5);`
+
+
+Const member functions are not allowed to change values of the data members of their class. The `const` keyword is added after the function name in the function signature at declaration.
+
+`double MyClass::get_average() const`
+
+
+A const object of a class, can only invoke member functions which are marked as const, since they do not change the object.
+
+`const MyClass object;`
+
+
+# Limiting If Scope
+
+Variables can be moved inside the scope of an If-Else block to reduce the scope of variables used exclusively for flow management.
+
+Example of how `elapsed_time` scope is moved inside the if statement. 
+
+```
+	if (double elapsed_time = time.now() - last_time);
+	    time_since_last_message > 5) {
+    // Stuff
+	} else {
+    // Other stuff
+  }
+```
+
+`elapsed_time` could also be used for other else if () branches in the example above.
+
+
+# Initialization / Construction
+
+
+## Constructor Initialization
+
+Initializing class variables inside of a constructor function body is called constructor initialization. It is the basic way of initializing variables. It's commonly reserved for initialization that requires more logic than simply passing assigning an argument passed to the constructor.
+
+```
+class Circle {
+  double radius;
+  double circumference;
+  double area;
+public:
+  S(int radius): radius(radius) {
+    circumference = 2*pi*radius;
+    area = pi*radius^2
+  }
+};
+```
+
+## Initializer List
+
+Class members can be initialized directly from arguments inside an initializer list defined with the constructor. Some logic can also be used inside the parenthesis. Useful for simple initialization of variables, so that constructor can contain calls to member functions.
+
+```
+class S {
+  int i1;
+  int i2;
+  int i3 = 42; // In-class initializer
+public:
+  S( int halfValue, int i2 = 0 ) : i1(2*halfValue), i2(i2) {} // Compliant
+};
+```
+
+## In-Class Initialization
+
+In-class initialization, is initialization that is done within the declaration of a class. For example:
+
+```
+class S {
+  int i1;
+  int i2;
+  int i3 = 42; // In-class initializer
+public:
+  S( int halfValue, int i2 = 0 ) : i1(2*halfValue), i2(i2) {} // Compliant
+};
+```
+
+In-class initialization is preferred over using an initializer list whenever arguments are statically initialized. In the example i3 is always initialized to 42. Better to place in the declaration than in the initializer list since it is not related to any of the arguments passed to the constructor.
+
+
+# Creating Shared / Unique Pointers
+
+Shared pointers should be created using,
+
+`auto VAR = std::make_shared<TYPE>(ARGS);`
+
+over,
+
+`<TYPE> VAR(new CLASS)`
+
+This version is more concise, safer and more efficient.
+
+The same should be done for unique pointers
+
+
+# Heterogenous Access
+
+https://www.cppstories.com/2021/heterogeneous-access-cpp20/
+
+A way to speed up the performance of lookup in ordered and unordered associative containers.
+
+An associative container is a data structure where values are associated with keys.
+
+Default implementations commonly use `std::less<Key>` for comparison. Default `std::map` template params:
+
+```
+template<class Key, class T,
+    class Compare = std::less<Key>,
+    class Allocator = std::allocator<std::pair<const Key, T> >
+> class map;
+```
+
+However, the comparator, `std::less<Key>` is slow since it requires the comparisons to be performed with the same type as the template is implemented. Using this comparator, if a different type is passed coercion is used to allow the comparison to take place. It is this coercion that causes performance overhead, since an object of type Key has to be allocated.
+
+Example with `std::string`, passing a string literal, as an arguments to `find()` or a similar function will require allocation of a `std::string` to facilitate the comparison.
+
+The comparator `std::less<>` does not specify a type requirement. Looking at the implementation, comparisons are done without looking at types, as long as a comparison can be done, the type does not matter.
+
+As an example a string can be compared to a string literal.
+
+Implementation of `std::less<>`:
+
+```
+template <>
+struct less<void> { 
+    using is_transparent = int;
+
+    // simplified version...
+    template <class _Ty1, class _Ty2>
+    constexpr auto operator()(_Ty1&& _Left, _Ty2&& _Right) const
+        return static_cast<_Ty1&&>(_Left) < static_cast<_Ty2&&>(_Right);
+    }
+};
+```
+
+
+This is referred to as **heterogenous access**. It is enabled for comparators that have the is_transparent tag.
+
+In the example above is_transparent is set using the `using` keyword, and just set to int. It is also common to see it set as void.
+
+Most container classes are overloaded to use other comparable methods, such as `contains()`, when Compare::is_transparent is enabled.
+
+
+## Ordered Containers
+
+For ordered containers heterogeneous access is enabled by simply passing the comparator std::less<> comparator to the container. Example for a set:
+
+```
+std::map<std::string, int, std::less<>> trIntMap { 
+    { "Hello Super Long String", 1 }, 
+    { "Another Longish String", 2 }, 
+    {"This cannot fall into SSO buffer", 3 }
+};
+```
+
+
+Normally associative containers (sets, maps, etc.) can only be searched by the key, however it is possible to define comparison methods so types besides the key can be used to searched. Using methods such as `find()`.
+
+This requires the use of `is_transparent`. 
+
+For sets it's possible to customize the comparison function.
+
+A comparison function is a Struct that defines the way comparison is done.
+
+
+
+
+
+# Comparison Functions
+
+Defined as a Struct for unordered_map and set.
+
+Comparison functions are specific depending on the associative container, for example, sets, maps, etc. They usually have a specification similar to, "... a predicate which takes two arguments and returns a boolean value indicating whether they are to be considered equivalent. It returns true if they are equivalent else it returns false."
+
+https://www.geeksforgeeks.org/unordered_map-key_eq-function-in-c-stl/
+
+See https://www.fluentcpp.com/2017/06/09/search-set-another-type-key/ for more info.
+
+Can be used to allow for matching on different types, another usage is to enable heterogeneous access.
+
