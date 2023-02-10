@@ -876,16 +876,6 @@ std::map<std::string, int, std::less<>> trIntMap {
 ```
 
 
-Normally associative containers (sets, maps, etc.) can only be searched by the key, however it is possible to define comparison methods so types besides the key can be used to searched. Using methods such as `find()`.
-
-This requires the use of `is_transparent`. 
-
-For sets it's possible to customize the comparison function.
-
-A comparison function is a Struct that defines the way comparison is done.
-
-
-
 
 
 # Comparison Functions
