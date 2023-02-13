@@ -876,8 +876,6 @@ std::map<std::string, int, std::less<>> trIntMap {
 ```
 
 
-
-
 # Comparison Functions
 
 Defined as a Struct for unordered_map and set.
@@ -889,4 +887,13 @@ https://www.geeksforgeeks.org/unordered_map-key_eq-function-in-c-stl/
 See https://www.fluentcpp.com/2017/06/09/search-set-another-type-key/ for more info.
 
 Can be used to allow for matching on different types, another usage is to enable heterogeneous access.
+
+
+# Testing
+
+While testing using GTest it's common to add friend tests to get access to private members for a test. Instead, make the entire test fixture a friend, create a wrapper object which wraps the object from which private members should be retrieved.
+
+There is less dead hanging code, and tests can be added without extending. Only members should be accessed, no logic should be in wrapper class.
+
+Alex and Nikolaj have example code.
 
