@@ -832,13 +832,13 @@ template<class Key, class T,
 > class map;
 ```
 
-However, the comparator, `std::less<Key>` is slow since it requires the comparisons to be performed with the same type as the template is implemented. Using this comparator, if a different type is passed coercion is used to allow the comparison to take place. It is this coercion that causes performance overhead, since an object of type Key has to be allocated.
+However, the comparator, `std::less<Key>` is slow since it requires the comparisons to be performed with the same type as the template is implemented. Using this comparator, if a different type is passed, coercion is used to allow the comparison to take place. It is this coercion that causes performance overhead, since an object of type Key has to be allocated.
 
 Example with `std::string`, passing a string literal, as an arguments to `find()` or a similar function will require allocation of a `std::string` to facilitate the comparison.
 
 The comparator `std::less<>` does not specify a type requirement. Looking at the implementation, comparisons are done without looking at types, as long as a comparison can be done, the type does not matter.
 
-As an example a string can be compared to a string literal.
+As an example a `std::string` can be compared to a string literal.
 
 Implementation of `std::less<>`:
 
@@ -886,7 +886,7 @@ https://www.geeksforgeeks.org/unordered_map-key_eq-function-in-c-stl/
 
 See https://www.fluentcpp.com/2017/06/09/search-set-another-type-key/ for more info.
 
-Can be used to allow for matching on different types, another usage is to enable heterogeneous access.
+Can be used to allow for matching on different types, another usage is to enable heterogeneous access for unordered containers.
 
 
 # Testing
@@ -895,5 +895,28 @@ While testing using GTest it's common to add friend tests to get access to priva
 
 There is less dead hanging code, and tests can be added without extending. Only members should be accessed, no logic should be in wrapper class.
 
-Alex and Nikolaj have example code.
 
+# Variable List Initialization
+
+List initialization is more strict and does not allow for narrowing or truncation.
+
+```
+void fun(double val, int val2) {
+
+    int x2 = val;    // if val == 7.9, x2 becomes 7 (bad)
+
+    char c2 = val2;  // if val2 == 1025, c2 becomes 1 (bad)
+
+    int x3 {val};    // error: possible truncation (good)
+
+    char c3 {val2};  // error: possible narrowing (good)
+
+    char c4 {24};    // OK: 24 can be represented exactly as a char (good)
+
+    char c5 {264};   // error (assuming 8-bit chars): 264 cannot be 
+                     // represented as a char (good)
+
+    int x4 {2.0};    // error: no double to int value conversion (good)
+
+}
+```
